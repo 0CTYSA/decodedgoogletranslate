@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Decodificador Masivo Mejorado de URL de Google Translate</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="js/decoder.js"></script>
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h1 class="mb-4">Decodificador de URL(s) de Google Translate</h1>
+      <form id="urlForm" novalidate>
+        <div class="form-group">
+          <label for="urlInput"
+            >Pega las URLs de Google Translate aquí (una por línea):</label
+          >
+          <textarea
+            class="form-control"
+            id="urlInput"
+            rows="5"
+            placeholder="Ejemplo:
+https://example-com.translate.goog
+https://foo-example-com.translate.goog"
+            required
+          ></textarea>
+          <div class="invalid-feedback">
+            Por favor, ingresa al menos una URL en el formato correcto.
+          </div>
+        </div>
+        <div class="form-group d-flex justify-content-start">
+          <button class="btn btn-primary mr-2" type="submit">
+            Decodificar URLs
+          </button>
+          <button class="btn btn-dark" type="button" onclick="clearTextArea()">
+            Limpiar
+          </button>
+        </div>
+      </form>
+      <button class="btn btn-info mr-2" onclick="removeGoogleParameters()">
+        Quitar Parámetros de Google
+      </button>
+      <button class="btn btn-warning mr-2" onclick="copyResults()">
+        Copiar Resultados
+      </button>
+      <ul class="list-group mt-4" id="decodedURLsList"></ul>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js"></script>
+  </body>
+</html>
