@@ -28,12 +28,12 @@ function decodeHostname(proxyUrl) {
 }
 
 function decodeFullURLs(validUrls) {
-  // Ya no necesitamos obtener las URLs del campo de entrada porque estamos pasando las URLs válidas como un parámetro.
+  // We no longer need to get the URLs from the input field because we are passing the valid URLs as a parameter.
   var listElement = document.getElementById("decodedURLsList");
-  listElement.innerHTML = ""; // Limpiar la lista anterior.
+  listElement.innerHTML = ""; // Clear the previous list.
 
   validUrls.forEach(function (proxyUrl) {
-    // Usa el array validUrls ya validado.
+    // Uses the already validated validUrls array.
     var parsedUrl = new URL(proxyUrl);
     var decodedHostname = decodeHostname(proxyUrl);
     parsedUrl.hostname = decodedHostname;
@@ -41,7 +41,7 @@ function decodeFullURLs(validUrls) {
     parsedUrl.searchParams.delete("_x_tr_enc");
     parsedUrl.searchParams.delete("_x_tr_hp");
 
-    // Agregar el resultado a la lista
+    // Add the result to the list
     var listItem = document.createElement("li");
     listItem.classList.add("list-group-item");
     listItem.textContent = parsedUrl.href;
@@ -83,7 +83,7 @@ function copyResults() {
 }
 
 function clearTextArea() {
-  document.getElementById("urlInput").value = ""; // Limpia el contenido del textarea
+  document.getElementById("urlInput").value = ""; // Clears the textarea content
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -94,32 +94,32 @@ document.addEventListener("DOMContentLoaded", function () {
     "submit",
     function (event) {
       event.preventDefault();
-      // Quitar clases previas para resetear la validación visual
+      // Remove previous classes to reset visual validation
       urlInput.classList.remove("is-invalid", "is-valid");
 
-      var urls = urlInput.value.trim().split("\n").filter(Boolean); // Elimina líneas vacías
-      var isValid = urls.length > 0; // Al menos debe haber una URL
+      var urls = urlInput.value.trim().split("\n").filter(Boolean); // Removes empty lines
+      var isValid = urls.length > 0; // There must be at least one URL
       var googleTranslateRegex = /^(https?:\/\/)?([\w\-]+\.)+translate\.goog/;
 
-      // Revisa cada URL para ver si corresponde a un dominio de Google Translate
+      // Check each URL to see if it corresponds to a Google Translate domain.
       urls.forEach(function (url) {
         if (!googleTranslateRegex.test(url.trim())) {
           isValid = false;
         }
       });
 
-      // Aplicar clases de validación según si la entrada es válida o no
+      // Apply validation classes depending on whether the input is valid or invalid
       if (!isValid) {
-        // Si es inválido, añadir 'is-invalid' y quitar 'is-valid'
+        // If invalid, add 'is-invalid' and remove 'is-valid'.
         urlInput.classList.remove("is-valid");
         urlInput.classList.add("is-invalid");
         form.classList.add("was-validated");
       } else {
-        // Si es válido, añadir 'is-valid' y quitar 'is-invalid'
+        // If valid, add 'is-valid' and remove 'is-invalid'.
         urlInput.classList.remove("is-invalid");
         urlInput.classList.add("is-valid");
-        // Si todo es válido, proceder con la función de decodificación
-        decodeFullURLs(urls); // Asegúrate de que esta función esté definida y haga lo que necesitas
+        // If everything is valid, proceed with the decoding function.
+        decodeFullURLs(urls); // Make sure this function is defined and does what you need it to do.
       }
     },
     false
