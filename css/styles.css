@@ -1,34 +1,34 @@
-/* Estilos para el estado válido */
+/* Styles for the valid state */
 .is-valid {
-  border-color: #28a745 !important; /* Verde para el borde */
+  border-color: #28a745 !important; /* Green for the border */
 }
 
 .is-valid:focus {
   box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important;
 }
 
-/* Estilos para el estado inválido */
+/* Styles for the invalid state */
 .is-invalid {
-  border-color: #dc3545 !important; /* Rojo para el borde */
+  border-color: #dc3545 !important; /* Red for the border */
 }
 
 .is-invalid:focus {
   box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
 }
 
-/* Elimina los estilos de background-image por defecto de Bootstrap */
+/* Remove default background-image styles from Bootstrap */
 .was-validated .form-control:valid,
 .was-validated .form-control:invalid,
 .form-control.is-valid,
 .form-control.is-invalid {
   background-image: none !important;
 }
-/* El icono de X rojo se muestra solo cuando la clase is-invalid está presente */
+/* The red X icon is only shown when the is-invalid class is present */
 .form-control.is-invalid {
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16"><path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/></svg>');
 }
 
-/* Asegúrate de que no haya estilos de hover verdes */
+/* Ensure no green hover styles */
 .form-control.is-valid:hover,
 .form-control.is-invalid:hover {
   border-color: inherit !important;
