@@ -1,79 +1,79 @@
 # 🔍 Google Translate URL Decoder - Bulk Tool
 
-## 🌐 Descripción del Proyecto
+## 🌐 Project Description
 
-Esta herramienta permite decodificar múltiples URLs ofuscadas por Google Translate simultáneamente. Especialmente útil para analistas de seguridad, investigadores de TI y profesionales que necesitan examinar URLs redirigidas a través del servicio de traducción de Google.
+This tool allows for simultaneous decoding of multiple URLs obfuscated by Google Translate. Particularly useful for security analysts, IT researchers, and professionals who need to examine URLs redirected through Google's translation service.
 
-## 🛠️ Funcionalidades Principales
+## 🛠️ Key Features
 
-### 🔗 Decodificación Masiva de URLs
+### 🔗 Bulk URL Decoding
 
-- Procesamiento por lotes de múltiples URLs ofuscadas
-- Soporte para diferentes esquemas de codificación de Google Translate
-- Manejo de caracteres IDN (Nombres de Dominio Internacionalizados)
+- Batch processing of multiple obfuscated URLs
+- Support for different Google Translate encoding schemes
+- IDN (Internationalized Domain Names) character handling
 
-### ⚙️ Características Adicionales
+### ⚙️ Additional Features
 
-- **Limpieza de parámetros**: Elimina parámetros de tracking de Google (`_x_tr_sl`, `_x_tr_tl`, etc.)
-- **Copiado fácil**: Botón para copiar todos los resultados al portapapeles
-- **Validación inteligente**: Detecta automáticamente URLs válidas de Google Translate
+- **Parameter cleaning**: Removes Google tracking parameters (`_x_tr_sl`, `_x_tr_tl`, etc.)
+- **Easy copying**: Button to copy all results to clipboard
+- **Smart validation**: Automatically detects valid Google Translate URLs
 
-## 🖥️ Cómo Usar la Herramienta
+## 🖥️ How to Use the Tool
 
-1. **Pegar URLs**: Ingresa las URLs codificadas (una por línea) en el área de texto
+1. **Paste URLs**: Enter encoded URLs (one per line) in the text area
 
    ```
-   Ejemplo:
+   Example:
    https://example-com.translate.goog
    https://foo-example-com.translate.goog
    ```
 
-2. **Opciones disponibles**:
-   - **Decode URLs**: Procesa las URLs y muestra los resultados
-   - **Clean**: Limpia el área de texto
-   - **Remove Google Parameters**: Elimina parámetros de tracking
-   - **Copy Results**: Copia los URLs decodificados
+2. **Available options**:
+   - **Decode URLs**: Processes URLs and displays results
+   - **Clean**: Clears the text area
+   - **Remove Google Parameters**: Eliminates tracking parameters
+   - **Copy Results**: Copies decoded URLs
 
-## ⚙️ Tecnologías Utilizadas
+## ⚙️ Technologies Used
 
 - **Frontend**: HTML5, Bootstrap 4
-- **JavaScript**: Validación en cliente, manipulación de URLs
-- **API Web**: Clipboard API para copiado al portapeles
+- **JavaScript**: Client-side validation, URL manipulation
+- **Web API**: Clipboard API for copying to clipboard
 
-## 📁 Estructura del Código
+## 📁 Code Structure
 
-### Archivos principales:
+### Main files:
 
-- `index.html`: Interfaz de usuario
-- `decoder.js`: Lógica principal de decodificación
-- `styles.css`: Estilos personalizados
+- `index.html`: User interface
+- `decoder.js`: Core decoding logic
+- `styles.css`: Custom styles
 
-### Funciones clave en decoder.js:
+### Key functions in decoder.js:
 
-1. `decodeHostname()`: Decodifica el nombre de host ofuscado
-2. `decodeFullURLs()`: Procesa múltiples URLs y muestra resultados
-3. `removeGoogleParameters()`: Limpia parámetros de tracking
-4. `copyResults()`: Copia resultados al portapeles
-5. Manejadores de eventos para validación de formulario
+1. `decodeHostname()`: Decodes obfuscated hostnames
+2. `decodeFullURLs()`: Processes multiple URLs and displays results
+3. `removeGoogleParameters()`: Cleans tracking parameters
+4. `copyResults()`: Copies results to clipboard
+5. Form validation event handlers
 
-## 🚀 Casos de Uso
+## 🚀 Use Cases
 
-1. **Investigación de seguridad**: Analizar URLs sospechosas ofuscadas
-2. **Análisis forense digital**: Reconstruir URLs originales
-3. **Monitoreo web**: Identificar destinos reales de redirecciones
+1. **Security research**: Analyzing suspicious obfuscated URLs
+2. **Digital forensics**: Reconstructing original URLs
+3. **Web monitoring**: Identifying actual redirection destinations
 
-## 📌 Requisitos
+## 📌 Requirements
 
-- Navegador moderno (Chrome, Firefox, Edge)
-- Conexión a Internet (para cargar Bootstrap)
-- No se requiere instalación (herramienta web pura)
+- Modern browser (Chrome, Firefox, Edge)
+- Internet connection (to load Bootstrap)
+- No installation required (pure web tool)
 
-## ⚠️ Limitaciones
+## ⚠️ Limitations
 
-- Solo funciona con URLs de Google Translate
-- No maneja todos los posibles esquemas de ofuscación
-- Requiere que las URLs tengan formato válido
+- Only works with Google Translate URLs
+- Doesn't handle all possible obfuscation schemes
+- Requires URLs to have valid format
 
-## 📜 Licencia
+## 📜 License
 
-Distribuido bajo licencia MIT. Ver `LICENSE` para más información.
+Distributed under the MIT License. See `LICENSE` for more information.
