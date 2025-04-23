@@ -225,19 +225,23 @@ function removeGoogleParameters() {
 }
 
 function copyResults() {
-  var listItems = document
+  const listItems = document
     .getElementById("decodedURLsList")
     .getElementsByTagName("li");
-  var allText = "";
-  for (var i = 0; i < listItems.length; i++) {
-    allText += listItems[i].textContent + "\n";
+  let allText = "";
+
+  for (let i = 0; i < listItems.length; i++) {
+    const urlSpan = listItems[i].querySelector("span");
+    if (urlSpan) {
+      allText += urlSpan.textContent.trim() + "\n";
+    }
   }
 
   navigator.clipboard.writeText(allText).then(
-    function () {
+    () => {
       alert("Resultados copiados al portapapeles.");
     },
-    function (err) {
+    (err) => {
       console.error("Error al copiar al portapapeles: ", err);
     }
   );
