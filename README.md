@@ -4,6 +4,8 @@
 
 This tool allows for simultaneous decoding of multiple URLs obfuscated by Google Translate. Particularly useful for security analysts, IT researchers, and professionals who need to examine URLs redirected through Google's translation service.
 
+- [Google Translate Enhanced Bulk URL Decoder -Site-](https://0ctysa.github.io/decodedgoogletranslate/)
+
 ## 🛠️ Key Features
 
 ### 🔗 Bulk URL Decoding
