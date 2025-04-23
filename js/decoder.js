@@ -4,7 +4,7 @@ function decodeHostname(proxyUrl) {
   try {
     const parsedUrl = new URL(proxyUrl);
 
-    // Caso 1: URLs de translate.google.com
+    // Case 1: URLs from translate.google.com
     if (
       parsedUrl.hostname === "translate.google.com" ||
       parsedUrl.hostname === "translate.google.es"
@@ -19,47 +19,47 @@ function decodeHostname(proxyUrl) {
       }
     }
 
-    // Caso 2: URLs de translate.goog
+    // Case 2: URLs from translate.goog
     if (parsedUrl.hostname.endsWith(".translate.goog")) {
       let domainPrefix = parsedUrl.hostname.replace(".translate.goog", "");
 
-      // Paso 2: Lista de codificaciones
+      // Step 2: Encoding list
       const encodingList = parsedUrl.searchParams.has("_x_tr_enc")
         ? parsedUrl.searchParams.get("_x_tr_enc").split(",")
         : [];
 
-      // Paso 3: Agregar _x_tr_hp al dominio si existe
+      // Step 3: Add _x_tr_hp to the domain if it exists
       if (parsedUrl.searchParams.has("_x_tr_hp")) {
         domainPrefix = parsedUrl.searchParams.get("_x_tr_hp") + domainPrefix;
       }
 
-      // Paso 4: Eliminar "1-" si encoding incluye "1"
+      // Step 4: Remove "1-" if encoding includes "1"
       if (encodingList.includes("1") && domainPrefix.startsWith("1-")) {
         domainPrefix = domainPrefix.substring(2);
       }
 
-      // Paso 5: Eliminar "0-" si encoding incluye "0"
+      // Step 5: Remove "0-" if encoding includes "0"
       let isIdn = false;
       if (encodingList.includes("0") && domainPrefix.startsWith("0-")) {
         isIdn = true;
         domainPrefix = domainPrefix.substring(2);
       }
 
-      // Paso 6 & 7: Reemplazos de "-" por "." y "--" por "-"
+      // Step 6 & 7: Replace "-" with "." and "--" with "-"
       let decodedSegment = domainPrefix
         .replace(/\b-\b/g, ".")
         .replace(/--/g, "-");
 
-      // Paso 8: Añadir "xn--" si es IDN
+      // Step 8: Add "xn--" if it's an IDN
       if (isIdn) {
         decodedSegment = "xn--" + decodedSegment;
       }
 
-      // Reconstruir URL final
+      // Reconstruct the final URL
       const decodedUrl = new URL(parsedUrl.toString());
       decodedUrl.hostname = decodedSegment;
 
-      // Eliminar todos los parámetros _x_tr_*
+      // Remove all _x_tr_* parameters
       [...decodedUrl.searchParams.keys()]
         .filter((key) => key.startsWith("_x_tr_"))
         .forEach((key) => decodedUrl.searchParams.delete(key));
@@ -71,7 +71,7 @@ function decodeHostname(proxyUrl) {
       };
     }
 
-    // Caso desconocido
+    // Unknown case
     return {
       original: proxyUrl,
       decoded: proxyUrl,
@@ -91,11 +91,11 @@ function decodeFullURLs(validUrls) {
   const resultCountElement = document.getElementById("resultCount");
 
   listElement.innerHTML = "";
-  urlRegistry.length = 0; // Limpiar el registro
+  urlRegistry.length = 0; // Clear the registry
 
   validUrls.forEach((proxyUrl) => {
     const result = decodeHostname(proxyUrl);
-    urlRegistry.push(result); // Guardar en el registro
+    urlRegistry.push(result); // Save to the registry
 
     const listItem = document.createElement("li");
     listItem.className = "list-group-item";
@@ -118,7 +118,7 @@ function decodeFullURLs(validUrls) {
     listElement.appendChild(listItem);
   });
 
-  // Actualizar el contador
+  // Update the counter
   resultCountElement.textContent = urlRegistry.length.toString();
   document.getElementById("removeParamsBtn").style.display = "none";
 }
@@ -144,10 +144,10 @@ function showOriginalURLs() {
     listElement.appendChild(listItem);
   });
 
-  // Mostrar botón de limpiar parámetros
+  // Show the clear parameters button
   document.getElementById("removeParamsBtn").style.display = "inline-block";
 
-  // Actualizar contador
+  // Update the counter
   resultCountElement.textContent = urlRegistry.length.toString();
 }
 
@@ -168,11 +168,11 @@ function removeGoogleParameters() {
 
   urlRegistry.forEach((item) => {
     try {
-      // Reaplicar el decodificador sobre la URL original
+      // Reapply the decoder on the original URL
       const reDecoded = decodeHostname(item.original);
       const urlObj = new URL(reDecoded.decoded);
 
-      // Limpiar parámetros específicos de Google Translate
+      // Clear specific Google Translate parameters
       [
         "_x_tr_sl",
         "_x_tr_tl",
@@ -220,7 +220,7 @@ function removeGoogleParameters() {
     }
   });
 
-  // Actualizar contador
+  // Update the counter
   resultCountElement.textContent = urlRegistry.length.toString();
 }
 
@@ -239,10 +239,10 @@ function copyResults() {
 
   navigator.clipboard.writeText(allText).then(
     () => {
-      alert("Resultados copiados al portapapeles.");
+      alert("Results copied to clipboard.");
     },
     (err) => {
-      console.error("Error al copiar al portapapeles: ", err);
+      console.error("Error copying to clipboard: ", err);
     }
   );
 }
