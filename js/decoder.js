@@ -66,6 +66,8 @@ function decodeHostname(proxyUrl) {
 
 function decodeFullURLs(validUrls) {
   const listElement = document.getElementById("decodedURLsList");
+  const resultCountElement = document.getElementById("resultCount");
+
   listElement.innerHTML = "";
   urlRegistry.length = 0; // Limpiar el registro
 
@@ -93,10 +95,15 @@ function decodeFullURLs(validUrls) {
     listItem.appendChild(badge);
     listElement.appendChild(listItem);
   });
+
+  // Actualizar el contador
+  resultCountElement.textContent = urlRegistry.length.toString();
+  document.getElementById("removeParamsBtn").style.display = "none";
 }
 
 function showOriginalURLs() {
   const listElement = document.getElementById("decodedURLsList");
+  const resultCountElement = document.getElementById("resultCount");
   listElement.innerHTML = "";
 
   urlRegistry.forEach((item) => {
@@ -114,6 +121,12 @@ function showOriginalURLs() {
     listItem.appendChild(badge);
     listElement.appendChild(listItem);
   });
+
+  // Mostrar botón de limpiar parámetros
+  document.getElementById("removeParamsBtn").style.display = "inline-block";
+
+  // Actualizar contador
+  resultCountElement.textContent = urlRegistry.length.toString();
 }
 
 function loadTestCases() {
@@ -128,26 +141,56 @@ function loadTestCases() {
 
 function removeGoogleParameters() {
   const listElement = document.getElementById("decodedURLsList");
+  const resultCountElement = document.getElementById("resultCount");
   listElement.innerHTML = "";
 
   urlRegistry.forEach((item) => {
     try {
       const urlObj = new URL(item.decoded);
+
+      // Eliminar solo los parámetros _x_tr_
       ["_x_tr_sl", "_x_tr_tl", "_x_tr_hl", "_x_tr_pto"].forEach((param) => {
         urlObj.searchParams.delete(param);
       });
 
       const listItem = document.createElement("li");
       listItem.className = "list-group-item";
-      listItem.textContent = urlObj.toString();
+
+      const urlSpan = document.createElement("span");
+      urlSpan.textContent = urlObj.toString();
+
+      const badge = document.createElement("span");
+      badge.className = `badge ${
+        item.type === "error"
+          ? "badge-danger"
+          : item.type === "unknown"
+          ? "badge-warning"
+          : "badge-info"
+      } url-badge`;
+      badge.textContent = item.type;
+
+      listItem.appendChild(urlSpan);
+      listItem.appendChild(badge);
       listElement.appendChild(listItem);
     } catch (e) {
       const listItem = document.createElement("li");
       listItem.className = "list-group-item";
-      listItem.textContent = item.decoded;
+
+      const urlSpan = document.createElement("span");
+      urlSpan.textContent = item.decoded;
+
+      const badge = document.createElement("span");
+      badge.className = `badge badge-danger url-badge`;
+      badge.textContent = "error";
+
+      listItem.appendChild(urlSpan);
+      listItem.appendChild(badge);
       listElement.appendChild(listItem);
     }
   });
+
+  // Actualizar contador
+  resultCountElement.textContent = urlRegistry.length.toString();
 }
 
 function copyResults() {
@@ -170,7 +213,20 @@ function copyResults() {
 }
 
 function clearTextArea() {
-  document.getElementById("urlInput").value = ""; // Clears the textarea content
+  document.getElementById("urlInput").value = "";
+
+  const listElement = document.getElementById("decodedURLsList");
+  listElement.innerHTML = "";
+
+  document.getElementById("resultCount").textContent = "0";
+
+  document
+    .getElementById("urlInput")
+    .classList.remove("is-invalid", "is-valid");
+  document.getElementById("urlForm").classList.remove("was-validated");
+  document.getElementById("removeParamsBtn").style.display = "none";
+
+  urlRegistry.length = 0;
 }
 
 document.addEventListener("DOMContentLoaded", function () {
