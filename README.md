@@ -17,22 +17,28 @@ This tool allows for simultaneous decoding of multiple URLs obfuscated by Google
 - **Parameter cleaning**: Removes Google tracking parameters (`_x_tr_sl`, `_x_tr_tl`, etc.)
 - **Easy copying**: Button to copy all results to clipboard
 - **Smart validation**: Automatically detects valid Google Translate URLs
+- **Test cases**: Preloaded test cases for quick testing
+- **Original URL display**: Option to view the original URLs before decoding
+- **Enhanced decoding**: Handles both `translate.goog` and `translate.google.com` patterns, including obfuscated URLs.
 
 ## 🖥️ How to Use the Tool
 
-1. **Paste URLs**: Enter encoded URLs (one per line) in the text area
+1. **Paste URLs**: Enter encoded URLs (one per line) in the text area.
 
    ```
    Example:
    https://example-com.translate.goog
    https://foo-example-com.translate.goog
+   https://translate.google.com/translate?u=https%3A%2F%2Freal-site.com
    ```
 
 2. **Available options**:
-   - **Decode URLs**: Processes URLs and displays results
-   - **Clean**: Clears the text area
-   - **Remove Google Parameters**: Eliminates tracking parameters
-   - **Copy Results**: Copies decoded URLs
+   - **Decode URLs**: Processes URLs and displays results.
+   - **Clean**: Clears the text area.
+   - **Remove Google Parameters**: Eliminates tracking parameters from decoded URLs.
+   - **Show Original**: Displays the original URLs before decoding.
+   - **Copy Results**: Copies decoded URLs to the clipboard.
+   - **Load Test Cases**: Loads predefined test cases for quick testing.
 
 ## ⚙️ Technologies Used
 
@@ -50,17 +56,19 @@ This tool allows for simultaneous decoding of multiple URLs obfuscated by Google
 
 ### Key functions in decoder.js:
 
-1. `decodeHostname()`: Decodes obfuscated hostnames
-2. `decodeFullURLs()`: Processes multiple URLs and displays results
-3. `removeGoogleParameters()`: Cleans tracking parameters
-4. `copyResults()`: Copies results to clipboard
-5. Form validation event handlers
+1. `decodeHostname()`: Decodes obfuscated hostnames.
+2. `decodeFullURLs()`: Processes multiple URLs and displays results.
+3. `removeGoogleParameters()`: Cleans tracking parameters.
+4. `copyResults()`: Copies results to clipboard.
+5. `showOriginalURLs()`: Displays the original URLs before decoding.
+6. `loadTestCases()`: Loads predefined test cases for testing.
+7. Form validation event handlers.
 
 ## 🚀 Use Cases
 
-1. **Security research**: Analyzing suspicious obfuscated URLs
-2. **Digital forensics**: Reconstructing original URLs
-3. **Web monitoring**: Identifying actual redirection destinations
+1. **Security research**: Analyzing suspicious obfuscated URLs.
+2. **Digital forensics**: Reconstructing original URLs.
+3. **Web monitoring**: Identifying actual redirection destinations.
 
 ## 📌 Requirements
 
@@ -68,11 +76,13 @@ This tool allows for simultaneous decoding of multiple URLs obfuscated by Google
 - Internet connection (to load Bootstrap)
 - No installation required (pure web tool)
 
-## ⚠️ Limitations
+## ⚠️ Considerations
 
-- Only works with Google Translate URLs
-- Doesn't handle all possible obfuscation schemes
-- Requires URLs to have valid format
+- **Supported URL patterns**: The tool supports decoding for both `translate.goog` and `translate.google.com` URLs. Ensure the URLs follow these patterns for accurate decoding.
+- **Parameter removal**: The "Remove Google Parameters" feature eliminates specific tracking parameters but may not handle custom or unknown parameters.
+- **Validation**: URLs must be in a valid format. Invalid or unsupported URLs will be flagged with a warning or error badge.
+- **IDN handling**: The tool supports Internationalized Domain Names (IDN) but requires proper encoding in the input URLs.
+- **Limitations**: The tool does not handle all possible obfuscation schemes and is limited to Google Translate URLs.
 
 ## 📜 License
 
