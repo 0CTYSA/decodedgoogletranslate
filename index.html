@@ -16,9 +16,17 @@
   <body>
     <div class="container mt-5">
       <h1 class="mb-4">URL(s) decoder</h1>
-      <div class="alert alert-info">
+      <div class="alert alert-info alert-dismissible fade show" role="alert">
         <strong>New features:</strong> Now handles both translate.goog and
         translate.google.com patterns, including obfuscated URLs.
+        <button
+          type="button"
+          class="close"
+          data-dismiss="alert"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
       <form id="urlForm" novalidate>
         <div class="form-group">
