@@ -1,3 +1,4 @@
+<!-- index.html (modificado) -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -9,12 +10,27 @@
       integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="css/styles.css" />
+    <style>
+      .url-badge {
+        font-size: 0.75rem;
+        margin-left: 8px;
+      }
+      .list-group-item {
+        word-break: break-all;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+    </style>
     <script src="js/decoder.js"></script>
   </head>
   <body>
     <div class="container mt-5">
       <h1 class="mb-4">URL(s) decoder</h1>
+      <div class="alert alert-info">
+        <strong>New features:</strong> Now handles both translate.goog and
+        translate.google.com patterns, including obfuscated URLs.
+      </div>
       <form id="urlForm" novalidate>
         <div class="form-group">
           <label for="urlInput"
@@ -24,31 +40,58 @@
             class="form-control"
             id="urlInput"
             rows="5"
-            placeholder="Example:
+            placeholder="Examples:
 https://example-com.translate.goog
-https://foo-example-com.translate.goog"
+https://foo-example-com.translate.goog
+https://translate.google.com/translate?u=https%3A%2F%2Freal-site.com"
             required
           ></textarea>
           <div class="invalid-feedback">
             Please enter at least one URL in the correct format.
           </div>
         </div>
+
         <div class="form-group d-flex justify-content-start">
           <button class="btn btn-primary mr-2" type="submit">
             Decode URLs
           </button>
-          <button class="btn btn-dark" type="button" onclick="clearTextArea()">
+          <button
+            class="btn btn-dark mr-2"
+            type="button"
+            onclick="clearTextArea()"
+          >
             Clean
+          </button>
+          <button
+            class="btn btn-secondary"
+            type="button"
+            onclick="loadTestCases()"
+          >
+            Load Test Cases
           </button>
         </div>
       </form>
-      <button class="btn btn-info mr-2" onclick="removeGoogleParameters()">
-        Remove Google Parameters
-      </button>
-      <button class="btn btn-warning mr-2" onclick="copyResults()">
-        Copy Results
-      </button>
-      <ul class="list-group mt-4" id="decodedURLsList"></ul>
+
+      <div class="mb-3">
+        <button class="btn btn-info mr-2" onclick="removeGoogleParameters()">
+          Remove Google Parameters
+        </button>
+        <button class="btn btn-success mr-2" onclick="showOriginalURLs()">
+          Show Original
+        </button>
+        <button class="btn btn-warning mr-2" onclick="copyResults()">
+          Copy Results
+        </button>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          Decoded Results
+          <span class="badge badge-pill badge-secondary" id="resultCount"
+            >0</span
+          >
+        </div>
+        <ul class="list-group list-group-flush" id="decodedURLsList"></ul>
+      </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
