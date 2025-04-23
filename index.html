@@ -10,18 +10,7 @@
       integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
       crossorigin="anonymous"
     />
-    <style>
-      .url-badge {
-        font-size: 0.75rem;
-        margin-left: 8px;
-      }
-      .list-group-item {
-        word-break: break-all;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-    </style>
+    <link rel="stylesheet" href="css/styles.css" />
     <script src="js/decoder.js"></script>
   </head>
   <body>
@@ -73,7 +62,12 @@ https://translate.google.com/translate?u=https%3A%2F%2Freal-site.com"
       </form>
 
       <div class="mb-3">
-        <button class="btn btn-info mr-2" onclick="removeGoogleParameters()">
+        <button
+          class="btn btn-info mr-2"
+          id="removeParamsBtn"
+          onclick="removeGoogleParameters()"
+          style="display: none"
+        >
           Remove Google Parameters
         </button>
         <button class="btn btn-success mr-2" onclick="showOriginalURLs()">
