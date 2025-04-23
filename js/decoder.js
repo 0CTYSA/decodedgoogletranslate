@@ -4,7 +4,7 @@ function decodeHostname(proxyUrl) {
   try {
     const parsedUrl = new URL(proxyUrl);
 
-    // Caso 1: URLs de translate.google.com con parámetro u=
+    // Caso 1: URLs de translate.google.com
     if (
       parsedUrl.hostname === "translate.google.com" ||
       parsedUrl.hostname === "translate.google.es"
@@ -23,22 +23,43 @@ function decodeHostname(proxyUrl) {
     if (parsedUrl.hostname.endsWith(".translate.goog")) {
       let domainPrefix = parsedUrl.hostname.replace(".translate.goog", "");
 
-      // Manejar ofuscación con _x_tr_hp
+      // Paso 2: Lista de codificaciones
+      const encodingList = parsedUrl.searchParams.has("_x_tr_enc")
+        ? parsedUrl.searchParams.get("_x_tr_enc").split(",")
+        : [];
+
+      // Paso 3: Agregar _x_tr_hp al dominio si existe
       if (parsedUrl.searchParams.has("_x_tr_hp")) {
         domainPrefix = parsedUrl.searchParams.get("_x_tr_hp") + domainPrefix;
       }
 
-      // Limpiar prefijos aleatorios (ej: a1b2c3-example-com → example.com)
-      const domainParts = domainPrefix.split("-");
-      const cleanDomain = domainParts
-        .filter((part) => !/^[a-z0-9]{3,}$/i.test(part)) // Elimina cadenas aleatorias
-        .join(".")
-        .replace(/\.+/g, ".");
+      // Paso 4: Eliminar "1-" si encoding incluye "1"
+      if (encodingList.includes("1") && domainPrefix.startsWith("1-")) {
+        domainPrefix = domainPrefix.substring(2);
+      }
 
-      const decodedUrl = new URL(parsedUrl);
-      decodedUrl.hostname = cleanDomain;
+      // Paso 5: Eliminar "0-" si encoding incluye "0"
+      let isIdn = false;
+      if (encodingList.includes("0") && domainPrefix.startsWith("0-")) {
+        isIdn = true;
+        domainPrefix = domainPrefix.substring(2);
+      }
 
-      // Eliminar parámetros de traducción
+      // Paso 6 & 7: Reemplazos de "-" por "." y "--" por "-"
+      let decodedSegment = domainPrefix
+        .replace(/\b-\b/g, ".")
+        .replace(/--/g, "-");
+
+      // Paso 8: Añadir "xn--" si es IDN
+      if (isIdn) {
+        decodedSegment = "xn--" + decodedSegment;
+      }
+
+      // Reconstruir URL final
+      const decodedUrl = new URL(parsedUrl.toString());
+      decodedUrl.hostname = decodedSegment;
+
+      // Eliminar todos los parámetros _x_tr_*
       [...decodedUrl.searchParams.keys()]
         .filter((key) => key.startsWith("_x_tr_"))
         .forEach((key) => decodedUrl.searchParams.delete(key));
@@ -50,6 +71,7 @@ function decodeHostname(proxyUrl) {
       };
     }
 
+    // Caso desconocido
     return {
       original: proxyUrl,
       decoded: proxyUrl,
@@ -146,10 +168,19 @@ function removeGoogleParameters() {
 
   urlRegistry.forEach((item) => {
     try {
-      const urlObj = new URL(item.decoded);
+      // Reaplicar el decodificador sobre la URL original
+      const reDecoded = decodeHostname(item.original);
+      const urlObj = new URL(reDecoded.decoded);
 
-      // Eliminar solo los parámetros _x_tr_
-      ["_x_tr_sl", "_x_tr_tl", "_x_tr_hl", "_x_tr_pto"].forEach((param) => {
+      // Limpiar parámetros específicos de Google Translate
+      [
+        "_x_tr_sl",
+        "_x_tr_tl",
+        "_x_tr_hl",
+        "_x_tr_pto",
+        "_x_tr_hp",
+        "_x_tr_enc",
+      ].forEach((param) => {
         urlObj.searchParams.delete(param);
       });
 
@@ -161,13 +192,13 @@ function removeGoogleParameters() {
 
       const badge = document.createElement("span");
       badge.className = `badge ${
-        item.type === "error"
+        reDecoded.type === "error"
           ? "badge-danger"
-          : item.type === "unknown"
+          : reDecoded.type === "unknown"
           ? "badge-warning"
           : "badge-info"
       } url-badge`;
-      badge.textContent = item.type;
+      badge.textContent = reDecoded.type;
 
       listItem.appendChild(urlSpan);
       listItem.appendChild(badge);
@@ -177,7 +208,7 @@ function removeGoogleParameters() {
       listItem.className = "list-group-item";
 
       const urlSpan = document.createElement("span");
-      urlSpan.textContent = item.decoded;
+      urlSpan.textContent = item.original;
 
       const badge = document.createElement("span");
       badge.className = `badge badge-danger url-badge`;
