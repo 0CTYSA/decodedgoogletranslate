@@ -1,66 +1,153 @@
+const urlRegistry = [];
+
 function decodeHostname(proxyUrl) {
-  const parsedProxyUrl = new URL(proxyUrl);
-  let domainPrefix = parsedProxyUrl.hostname.substring(
-    0,
-    parsedProxyUrl.hostname.indexOf(".translate.goog")
-  );
-  const encodingList = parsedProxyUrl.searchParams.has("_x_tr_enc")
-    ? parsedProxyUrl.searchParams.get("_x_tr_enc").split(",")
-    : [];
-  if (parsedProxyUrl.searchParams.has("_x_tr_hp")) {
-    domainPrefix = parsedProxyUrl.searchParams.get("_x_tr_hp") + domainPrefix;
+  try {
+    const parsedUrl = new URL(proxyUrl);
+
+    // Caso 1: URLs de translate.google.com con parámetro u=
+    if (
+      parsedUrl.hostname === "translate.google.com" ||
+      parsedUrl.hostname === "translate.google.es"
+    ) {
+      const originalUrl = parsedUrl.searchParams.get("u");
+      if (originalUrl) {
+        return {
+          original: proxyUrl,
+          decoded: decodeURIComponent(originalUrl),
+          type: "google_translate",
+        };
+      }
+    }
+
+    // Caso 2: URLs de translate.goog
+    if (parsedUrl.hostname.endsWith(".translate.goog")) {
+      let domainPrefix = parsedUrl.hostname.replace(".translate.goog", "");
+
+      // Manejar ofuscación con _x_tr_hp
+      if (parsedUrl.searchParams.has("_x_tr_hp")) {
+        domainPrefix = parsedUrl.searchParams.get("_x_tr_hp") + domainPrefix;
+      }
+
+      // Limpiar prefijos aleatorios (ej: a1b2c3-example-com → example.com)
+      const domainParts = domainPrefix.split("-");
+      const cleanDomain = domainParts
+        .filter((part) => !/^[a-z0-9]{3,}$/i.test(part)) // Elimina cadenas aleatorias
+        .join(".")
+        .replace(/\.+/g, ".");
+
+      const decodedUrl = new URL(parsedUrl);
+      decodedUrl.hostname = cleanDomain;
+
+      // Eliminar parámetros de traducción
+      [...decodedUrl.searchParams.keys()]
+        .filter((key) => key.startsWith("_x_tr_"))
+        .forEach((key) => decodedUrl.searchParams.delete(key));
+
+      return {
+        original: proxyUrl,
+        decoded: decodedUrl.toString(),
+        type: "translate_goog",
+      };
+    }
+
+    return {
+      original: proxyUrl,
+      decoded: proxyUrl,
+      type: "unknown",
+    };
+  } catch (e) {
+    return {
+      original: proxyUrl,
+      decoded: proxyUrl,
+      type: "error",
+    };
   }
-  let isIdn = false;
-  if (encodingList.includes("1") && domainPrefix.startsWith("1-")) {
-    domainPrefix = domainPrefix.substring(2);
-  }
-  if (encodingList.includes("0") && domainPrefix.startsWith("0-")) {
-    isIdn = true;
-    domainPrefix = domainPrefix.substring(2);
-  }
-  let decodedSegment = domainPrefix
-    .replaceAll(/\b-\b/g, ".")
-    .replaceAll("--", "-");
-  if (isIdn) {
-    decodedSegment = "xn--" + decodedSegment;
-  }
-  return decodedSegment;
 }
 
 function decodeFullURLs(validUrls) {
-  // We no longer need to get the URLs from the input field because we are passing the valid URLs as a parameter.
-  var listElement = document.getElementById("decodedURLsList");
-  listElement.innerHTML = ""; // Clear the previous list.
+  const listElement = document.getElementById("decodedURLsList");
+  listElement.innerHTML = "";
+  urlRegistry.length = 0; // Limpiar el registro
 
-  validUrls.forEach(function (proxyUrl) {
-    // Uses the already validated validUrls array.
-    var parsedUrl = new URL(proxyUrl);
-    var decodedHostname = decodeHostname(proxyUrl);
-    parsedUrl.hostname = decodedHostname;
-    parsedUrl.pathname = parsedUrl.pathname;
-    parsedUrl.searchParams.delete("_x_tr_enc");
-    parsedUrl.searchParams.delete("_x_tr_hp");
+  validUrls.forEach((proxyUrl) => {
+    const result = decodeHostname(proxyUrl);
+    urlRegistry.push(result); // Guardar en el registro
 
-    // Add the result to the list
-    var listItem = document.createElement("li");
-    listItem.classList.add("list-group-item");
-    listItem.textContent = parsedUrl.href;
+    const listItem = document.createElement("li");
+    listItem.className = "list-group-item";
+
+    const urlSpan = document.createElement("span");
+    urlSpan.textContent = result.decoded;
+
+    const badge = document.createElement("span");
+    badge.className = `badge ${
+      result.type === "error"
+        ? "badge-danger"
+        : result.type === "unknown"
+        ? "badge-warning"
+        : "badge-info"
+    } url-badge`;
+    badge.textContent = result.type;
+
+    listItem.appendChild(urlSpan);
+    listItem.appendChild(badge);
     listElement.appendChild(listItem);
   });
 }
 
+function showOriginalURLs() {
+  const listElement = document.getElementById("decodedURLsList");
+  listElement.innerHTML = "";
+
+  urlRegistry.forEach((item) => {
+    const listItem = document.createElement("li");
+    listItem.className = "list-group-item";
+
+    const urlSpan = document.createElement("span");
+    urlSpan.textContent = item.original;
+
+    const badge = document.createElement("span");
+    badge.className = "badge badge-secondary url-badge";
+    badge.textContent = "original";
+
+    listItem.appendChild(urlSpan);
+    listItem.appendChild(badge);
+    listElement.appendChild(listItem);
+  });
+}
+
+function loadTestCases() {
+  const testCases = [
+    "https://example-com.translate.goog/path?_x_tr_sl=auto",
+    "https://translate.google.com/translate?u=https%3A%2F%2Freal-site.com%2Ftest",
+    "https://random123-bank-com.translate.goog/login",
+  ];
+
+  document.getElementById("urlInput").value = testCases.join("\n");
+}
+
 function removeGoogleParameters() {
-  var listItems = document
-    .getElementById("decodedURLsList")
-    .getElementsByTagName("li");
-  for (var i = 0; i < listItems.length; i++) {
-    var url = new URL(listItems[i].textContent);
-    url.searchParams.delete("_x_tr_sl");
-    url.searchParams.delete("_x_tr_tl");
-    url.searchParams.delete("_x_tr_hl");
-    url.searchParams.delete("_x_tr_pto");
-    listItems[i].textContent = url.href;
-  }
+  const listElement = document.getElementById("decodedURLsList");
+  listElement.innerHTML = "";
+
+  urlRegistry.forEach((item) => {
+    try {
+      const urlObj = new URL(item.decoded);
+      ["_x_tr_sl", "_x_tr_tl", "_x_tr_hl", "_x_tr_pto"].forEach((param) => {
+        urlObj.searchParams.delete(param);
+      });
+
+      const listItem = document.createElement("li");
+      listItem.className = "list-group-item";
+      listItem.textContent = urlObj.toString();
+      listElement.appendChild(listItem);
+    } catch (e) {
+      const listItem = document.createElement("li");
+      listItem.className = "list-group-item";
+      listItem.textContent = item.decoded;
+      listElement.appendChild(listItem);
+    }
+  });
 }
 
 function copyResults() {
@@ -87,39 +174,36 @@ function clearTextArea() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  var form = document.getElementById("urlForm");
-  var urlInput = document.getElementById("urlInput");
+  const form = document.getElementById("urlForm");
+  const urlInput = document.getElementById("urlInput");
 
   form.addEventListener(
     "submit",
     function (event) {
       event.preventDefault();
-      // Remove previous classes to reset visual validation
+      // Reset validation classes
       urlInput.classList.remove("is-invalid", "is-valid");
+      form.classList.remove("was-validated");
 
-      var urls = urlInput.value.trim().split("\n").filter(Boolean); // Removes empty lines
-      var isValid = urls.length > 0; // There must be at least one URL
-      var googleTranslateRegex = /^(https?:\/\/)?([\w\-]+\.)+translate\.goog/;
+      const urls = urlInput.value.trim().split("\n").filter(Boolean);
+      const googleTranslateRegex =
+        /^(https?:\/\/)?([\w\-]+\.)*(translate\.goog|translate\.google\.[a-z]+)/i;
 
-      // Check each URL to see if it corresponds to a Google Translate domain.
-      urls.forEach(function (url) {
+      // Validate each URL
+      let isValid = urls.length > 0;
+      urls.forEach((url) => {
         if (!googleTranslateRegex.test(url.trim())) {
           isValid = false;
         }
       });
 
-      // Apply validation classes depending on whether the input is valid or invalid
+      // Apply validation
       if (!isValid) {
-        // If invalid, add 'is-invalid' and remove 'is-valid'.
-        urlInput.classList.remove("is-valid");
         urlInput.classList.add("is-invalid");
         form.classList.add("was-validated");
       } else {
-        // If valid, add 'is-valid' and remove 'is-invalid'.
-        urlInput.classList.remove("is-invalid");
         urlInput.classList.add("is-valid");
-        // If everything is valid, proceed with the decoding function.
-        decodeFullURLs(urls); // Make sure this function is defined and does what you need it to do.
+        decodeFullURLs(urls);
       }
     },
     false
